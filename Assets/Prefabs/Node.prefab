@@ -111,6 +111,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hovorColor: {r: 0.6392157, g: 0.6392157, b: 0.6392157, a: 1}
+  notEnoughColor: {r: 0.7924528, g: 0.15998574, b: 0.15998574, a: 1}
+  turret: {fileID: 0}
   buildPos:
     Objname:
     - laser

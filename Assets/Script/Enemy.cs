@@ -1,18 +1,24 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
     public float speed = 50f;
-
+    public float startHealt = 100;
+    private float healt;
+    public GameObject death;
     private Transform target;
-
+    public int price = 50;
     private int wavePointIndex = 0;
+
+    public Image healtImage;
 
     [SerializeField] private int damage = 5;
 
     private void Start()
     {
         target = wayPoints.points[0];
+        healt = startHealt;
     }
 
     private void Update()
@@ -31,20 +37,36 @@ public class Enemy : MonoBehaviour
     {
         if (wavePointIndex >= wayPoints.points.Length - 1)
         {
-            Destroy(gameObject);
+            EndPath();
             return;
         }
         wavePointIndex++;
         target = wayPoints.points[wavePointIndex];
     }
 
-    private void OnTriggerEnter(Collider other)
+    void EndPath()
     {
-        if (other.gameObject.tag.Equals("house"))
+        if (House.instance.GetCurretHealt() > 0)
+            House.instance.TakeDamage(damage);
+        Destroy(gameObject);
+    }
+
+    public void TakeDamage(int _amount)
+    {
+        healt -= _amount;
+        healtImage.fillAmount = healt / startHealt;
+        if (healt <= 0)
         {
-            print("fffff");
-            other.gameObject.GetComponent<House>().TakeDamage(damage);
+            Die();
         }
+    }
+
+    void Die()
+    {
+        PlayerStats.Money += price;
+        GameObject effect = Instantiate(death, transform.position, Quaternion.identity);
+        Destroy(effect, 3f);
+        Destroy(gameObject);
     }
 
 }

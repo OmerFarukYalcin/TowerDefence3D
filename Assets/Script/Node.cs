@@ -31,6 +31,7 @@ public class BuildingPosition
 public class Node : MonoBehaviour
 {
     public Color hovorColor;
+    public Color notEnoughColor;
     public GameObject turret;
     private Renderer rend;
     private Color startColor;
@@ -73,7 +74,15 @@ public class Node : MonoBehaviour
 
         if (!buildManager.CanBuild)
             return;
-        rend.material.color = hovorColor;
+
+        if (buildManager.HasMoney)
+        {
+            rend.material.color = hovorColor;
+        }
+        else
+        {
+            rend.material.color = notEnoughColor;
+        }
     }
 
     private void OnMouseExit()

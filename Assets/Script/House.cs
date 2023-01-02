@@ -4,12 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 public class House : MonoBehaviour
 {
+    public static House instance;
     [SerializeField] private float currentHealt;
     [SerializeField] Slider healtSlider;
 
     private void Awake()
     {
         currentHealt = healtSlider.value;
+        if (instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
     }
 
     public void TakeDamage(int _damage)
@@ -20,6 +29,11 @@ public class House : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public float GetCurretHealt()
+    {
+        return currentHealt;
     }
 
     void Die()

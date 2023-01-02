@@ -3,9 +3,9 @@ using UnityEngine;
 public class BuildManager : MonoBehaviour
 {
     private TurretBuilding turretToBuild;
-    public GameObject standardTurret;
-    public GameObject missileTurretPrefab;
+    public GameObject buildEffect;
     public bool CanBuild { get { return turretToBuild != null; } }
+    public bool HasMoney { get { return PlayerStats.Money >= turretToBuild.cost; } }
 
     public static BuildManager instance;
     private void Awake()
@@ -33,6 +33,8 @@ public class BuildManager : MonoBehaviour
         GameObject turret = Instantiate(turretToBuild.prefab, node.GetBuildPosition(turretToBuild.prefab.name), Quaternion.identity);
         node.turret = turret;
 
+        GameObject _buildEffect = Instantiate(buildEffect, node.GetBuildPosition(turretToBuild.prefab.name), Quaternion.identity);
+        Destroy(_buildEffect, 3f);
         Debug.Log("Turret build! money left:" + PlayerStats.Money);
     }
 
