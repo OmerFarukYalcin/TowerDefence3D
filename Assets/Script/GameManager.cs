@@ -1,8 +1,15 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private bool gameEnded = false;
+    public static bool gameEnded;
+    [SerializeField] GameObject gameOverUI;
+    [SerializeField] GameObject LevelCompleteCanvas;
+    private void Start()
+    {
+        gameEnded = false;
+    }
     private void Update()
     {
         if (gameEnded)
@@ -11,11 +18,27 @@ public class GameManager : MonoBehaviour
         {
             EndGame();
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            EndGame();
+        }
+    }
+
+    public void Retry()
+    {
+        SceneManager.LoadScene(0);
     }
 
     void EndGame()
     {
         gameEnded = true;
-        Debug.Log("Game Over!");
+        gameOverUI.SetActive(true);
+    }
+
+    public void WinLevel()
+    {
+        gameEnded = true;
+        LevelCompleteCanvas.SetActive(true);
     }
 }

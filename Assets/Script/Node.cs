@@ -1,42 +1,22 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System;
-using System.Collections.Generic;
-
-[Serializable]
-public class BuildingPosition
-{
-    public List<string> Objname;
-    public List<float> buildPosition;
-    float nodeOffset = 0.4f;
-    int index;
-    float missileOfset;
-    public Vector3 GetOffsetPositionByName(string _name)
-    {
-        if (Objname.Contains(_name))
-        {
-            index = Objname.IndexOf(_name);
-        }
-        return new Vector3(0f, buildPosition[index] + nodeOffset, 0f);
-    }
-    //0.118253
-    //0.1182537
-    //0.1182537
-    //0.1182534
-    //-50.89
-    //-0.1482105
-    //.2517895
-}
 
 public class Node : MonoBehaviour
 {
-    public Color hovorColor;
-    public Color notEnoughColor;
+    [Header("Turret buildPos")]
+    public BuildingTurretPosition buildPos;
+    [Header("Colors")]
+    [SerializeField] Color hovorColor;
+    [SerializeField] Color notEnoughColor;
+    [HideInInspector]
     public GameObject turret;
+    [HideInInspector]
+    public TurretBuilding turretStats;
+    [HideInInspector]
+    public bool isUpgraded = false;
     private Renderer rend;
     private Color startColor;
     BuildManager buildManager;
-    public BuildingPosition buildPos;
 
     private void Start()
     {
@@ -50,21 +30,68 @@ public class Node : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
-        if (!buildManager.CanBuild)
-            return;
-
         if (turret != null)
         {
-            Debug.Log("Cant build there!!!");
+            buildManager.SelectNode(this);
             return;
         }
 
-        buildManager.BuildTurretOn(this);
+        if (!buildManager.CanBuild)
+            return;
+
+        BuildTurret(buildManager.GetTurretToBuild());
     }
 
     public Vector3 GetBuildPosition(string _name)
     {
         return transform.position + buildPos.GetOffsetPositionByName(_name);
+    }
+
+    void BuildTurret(TurretBuilding _turret)
+    {
+        if (PlayerStats.Money < _turret.cost)
+        {
+            Debug.Log("Not enough money!!!");
+            return;
+        }
+        PlayerStats.Money -= _turret.cost;
+
+        GameObject _Turret = Instantiate(_turret.prefab, GetBuildPosition(_turret.prefab.name), Quaternion.identity);
+        turret = _Turret;
+
+        turretStats = _turret;
+
+        GameObject _buildEffect = Instantiate(buildManager.buildEffect, GetBuildPosition(_turret.prefab.name), Quaternion.identity);
+        Destroy(_buildEffect, 3f);
+        Debug.Log("Turret build! money left:" + PlayerStats.Money);
+    }
+
+    public void UpgradeTurret()
+    {
+        if (PlayerStats.Money < turretStats.upgradeCost)
+        {
+            Debug.Log("Not enough money!!!");
+            return;
+        }
+        PlayerStats.Money -= turretStats.upgradeCost;
+
+        Destroy(turret);
+
+        GameObject _Turret = Instantiate(turretStats.upgradedPrefab, GetBuildPosition(turretStats.prefab.name), Quaternion.identity);
+        turret = _Turret;
+
+        GameObject _buildEffect = Instantiate(buildManager.buildEffect, GetBuildPosition(turretStats.prefab.name), Quaternion.identity);
+        Destroy(_buildEffect, 3f);
+
+        isUpgraded = true;
+        Debug.Log("Turret build! money left:" + PlayerStats.Money);
+    }
+
+    public void SellTurret()
+    {
+        PlayerStats.Money += turretStats.GetSellAmount();
+        Destroy(turret);
+        turretStats = null;
     }
 
     private void OnMouseEnter()

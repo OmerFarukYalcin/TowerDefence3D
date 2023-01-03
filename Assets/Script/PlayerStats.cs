@@ -6,12 +6,14 @@ using TMPro;
 public class PlayerStats : MonoBehaviour
 {
     public static int Money;
-    public int startMoney = 400;
-    public TextMeshProUGUI _moneyText;
+    [SerializeField] int startMoney = 400;
+    [SerializeField] TextMeshProUGUI _moneyText;
+    public static int Rounds;
 
     private void Start()
     {
         Money = startMoney;
+        Rounds = 0;
     }
 
     private void Update()

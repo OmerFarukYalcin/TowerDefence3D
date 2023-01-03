@@ -5,6 +5,7 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
     private Transform target;
+    private Enemy targetEnemy;
     private int firePointIndex = 0;
     [Header("Use bullets (default)")]
     [SerializeField] GameObject bulletPrefab;
@@ -13,10 +14,12 @@ public class Turret : MonoBehaviour
     [Header("General")]
     [SerializeField] float range = 20f;
     [Header("Use Laser")]
-    public bool UseLaser = false;
-    public LineRenderer lineRenderer;
-    public ParticleSystem impactEffect;
-    public Light ImpactLight;
+    [SerializeField] bool UseLaser = false;
+    [SerializeField] int damageOverLifeTime = 30;
+    [SerializeField] float slowAmount = 0.5f;
+    [SerializeField] LineRenderer lineRenderer;
+    [SerializeField] ParticleSystem impactEffect;
+    [SerializeField] Light ImpactLight;
 
     [Header("Unity Setup Fields")]
     [SerializeField] Transform[] firePoint;
@@ -68,6 +71,8 @@ public class Turret : MonoBehaviour
 
     void Laser()
     {
+        targetEnemy.TakeDamage(damageOverLifeTime * Time.deltaTime);
+        targetEnemy.Slow(slowAmount);
         if (!lineRenderer.enabled)
         {
             lineRenderer.enabled = true;
@@ -124,6 +129,7 @@ public class Turret : MonoBehaviour
         if (nearestEnemy != null && shortestDistance <= range)
         {
             target = nearestEnemy.transform;
+            targetEnemy = nearestEnemy.GetComponent<Enemy>();
         }
         else
             target = null;

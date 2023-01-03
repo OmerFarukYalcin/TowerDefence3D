@@ -3,69 +3,60 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public float speed = 50f;
-    public float startHealt = 100;
+    [SerializeField] float startSpeed = 50f;
+    private float speed;
+    [SerializeField] float startHealt = 100;
     private float healt;
-    public GameObject death;
-    private Transform target;
-    public int price = 50;
-    private int wavePointIndex = 0;
+    [SerializeField] GameObject death;
+    [SerializeField] int price = 50;
+    [SerializeField] bool isDead = false;
 
-    public Image healtImage;
+    [SerializeField] Image healtImage;
 
-    [SerializeField] private int damage = 5;
 
     private void Start()
     {
-        target = wayPoints.points[0];
+        speed = startSpeed;
         healt = startHealt;
     }
 
-    private void Update()
+    public void Slow(float _amount)
     {
-        Vector3 dir = target.position - transform.position;
-
-        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
-
-        if (Vector3.Distance(transform.position, target.position) <= 0.2f)
-        {
-            GetNexWayPoint();
-        }
+        speed = startSpeed * (1f - _amount);
     }
 
-    void GetNexWayPoint()
-    {
-        if (wavePointIndex >= wayPoints.points.Length - 1)
-        {
-            EndPath();
-            return;
-        }
-        wavePointIndex++;
-        target = wayPoints.points[wavePointIndex];
-    }
-
-    void EndPath()
-    {
-        if (House.instance.GetCurretHealt() > 0)
-            House.instance.TakeDamage(damage);
-        Destroy(gameObject);
-    }
-
-    public void TakeDamage(int _amount)
+    public void TakeDamage(float _amount)
     {
         healt -= _amount;
         healtImage.fillAmount = healt / startHealt;
-        if (healt <= 0)
+        if (healt <= 0 && !isDead)
         {
             Die();
         }
     }
 
+    public float GetSpeed()
+    {
+        return speed;
+    }
+
+    public float GetStartSpeed()
+    {
+        return startSpeed;
+    }
+
+    public void SetSpeed(float _speed)
+    {
+        this.speed = _speed;
+    }
+
     void Die()
     {
+        isDead = true;
         PlayerStats.Money += price;
         GameObject effect = Instantiate(death, transform.position, Quaternion.identity);
         Destroy(effect, 3f);
+        WaveSpawner.EnemiesAlive--;
         Destroy(gameObject);
     }
 

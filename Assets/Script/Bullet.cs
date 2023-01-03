@@ -6,11 +6,11 @@ public class Bullet : MonoBehaviour
 {
     private Transform target;
 
-    public GameObject impactEffect;
-    public int _damage = 50;
+    [SerializeField] GameObject impactEffect;
+    [SerializeField] int _damage = 50;
 
     [SerializeField] float speed = 70f;
-    public float explosionRadius = 0f;
+    [SerializeField] float explosionRadius = 0f;
 
     public void Chase(Transform _target)
     {

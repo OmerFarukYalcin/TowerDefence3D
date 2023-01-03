@@ -5,24 +5,43 @@ using TMPro;
 
 public class WaveSpawner : MonoBehaviour
 {
-    public Transform enemyPrefab;
-    public Transform spawnPoint;
-    public TextMeshProUGUI waveCountDownText;
-    public float timeBetweenSpawn = 5f;
+    private GameManager gManager;
+    public static int EnemiesAlive = 0;
+    public Wave[] waves;
+    [SerializeField] Transform spawnPoint;
+    [SerializeField] TextMeshProUGUI waveCountDownText;
+    [SerializeField] float timeBetweenSpawn = 5f;
     private float countDown = 2f;
-    private int waveIndex = 1;
+    private int waveIndex = 0;
     void Start()
     {
-
+        gManager = GetComponent<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (EnemiesAlive > 0)
+        {
+            return;
+        }
+
+        if (waveIndex == waves.Length && House.instance.GetCurretHealt() > 0)
+        {
+            gManager.WinLevel();
+            this.enabled = false;
+        }
+
+        if (GameManager.gameEnded)
+        {
+            this.enabled = false;
+            return;
+        }
+
         if (countDown <= 0f)
         {
             StartCoroutine(spawnWave());
             countDown = timeBetweenSpawn;
+            return;
         }
         countDown -= Time.deltaTime;
         countDown = Mathf.Clamp(countDown, 0f, Mathf.Infinity);
@@ -31,16 +50,19 @@ public class WaveSpawner : MonoBehaviour
 
     IEnumerator spawnWave()
     {
-        waveIndex++;
-        for (int i = 0; i < waveIndex; i++)
+        PlayerStats.Rounds++;
+        Wave wave = waves[waveIndex];
+        for (int i = 0; i < wave.count; i++)
         {
-            SpawnEnemy();
-            yield return new WaitForSeconds(0.5f);
+            SpawnEnemy(wave.Enemy);
+            yield return new WaitForSeconds(1f / wave.rate);
         }
+        waveIndex++;
     }
 
-    void SpawnEnemy()
+    void SpawnEnemy(GameObject enemy)
     {
-        Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
+        EnemiesAlive++;
     }
 }

@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class BuildManager : MonoBehaviour
 {
+    [SerializeField] NodeUI nodeUI;
     private TurretBuilding turretToBuild;
+    private Node selectedNode;
     public GameObject buildEffect;
     public bool CanBuild { get { return turretToBuild != null; } }
     public bool HasMoney { get { return PlayerStats.Money >= turretToBuild.cost; } }
@@ -21,26 +23,35 @@ public class BuildManager : MonoBehaviour
 
     }
 
-    public void BuildTurretOn(Node node)
+    public TurretBuilding GetTurretToBuild()
     {
-        if (PlayerStats.Money < turretToBuild.cost)
+        return turretToBuild;
+    }
+
+    public void SelectNode(Node _selectNode)
+    {
+        if (selectedNode == _selectNode)
         {
-            Debug.Log("Not enough money!!!");
+            DeselectNode();
             return;
         }
-        PlayerStats.Money -= turretToBuild.cost;
+        selectedNode = _selectNode;
+        turretToBuild = null;
 
-        GameObject turret = Instantiate(turretToBuild.prefab, node.GetBuildPosition(turretToBuild.prefab.name), Quaternion.identity);
-        node.turret = turret;
+        nodeUI.SetTarget(_selectNode);
+    }
 
-        GameObject _buildEffect = Instantiate(buildEffect, node.GetBuildPosition(turretToBuild.prefab.name), Quaternion.identity);
-        Destroy(_buildEffect, 3f);
-        Debug.Log("Turret build! money left:" + PlayerStats.Money);
+    public void DeselectNode()
+    {
+        selectedNode = null;
+        nodeUI.Hide();
     }
 
     public void SelectTurretToBuild(TurretBuilding _turretBuild)
     {
         turretToBuild = _turretBuild;
+        DeselectNode();
+
     }
 
 

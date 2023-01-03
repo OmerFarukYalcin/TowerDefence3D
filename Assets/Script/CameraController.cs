@@ -2,20 +2,18 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private bool doMovement = true;
-    public float panSpeed = 30f;
-    public float panBorderThickness = 10f;
-    public float scroolSpeed = 5f;
-    public float minY = 10f;
-    public float maxY = 100f;
+    [SerializeField] float panSpeed = 30f;
+    [SerializeField] float panBorderThickness = 10f;
+    [SerializeField] float scroolSpeed = 5f;
+    [SerializeField] float minY = 10f;
+    [SerializeField] float maxY = 100f;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (GameManager.gameEnded)
         {
-            doMovement = !doMovement;
-        }
-        if (!doMovement)
+            this.enabled = false;
             return;
+        }
 
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
