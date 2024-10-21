@@ -367,11 +367,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 20
-  startHealt: 400
+  startHealth: 400
   death: {fileID: 7563431282196286949, guid: 74241ee98f243f546bc6e194813af6fb, type: 3}
   price: 300
   isDead: 0
-  healtImage: {fileID: 628377305155379113}
+  healthImage: {fileID: 0}
 --- !u!114 &8431302742073983364
 MonoBehaviour:
   m_ObjectHideFlags: 0

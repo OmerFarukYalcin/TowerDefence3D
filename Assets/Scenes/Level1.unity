@@ -4859,7 +4859,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 30
   panBorderThickness: 10
-  scroolSpeed: 5
+  scrollSpeed: 5
   minY: 10
   maxY: 100
 --- !u!1 &971408985
@@ -10370,8 +10370,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a5cf6670de58724da170d0cc500cfa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHealt: 0
-  healtSlider: {fileID: 530063821}
+  currentHealth: 0
+  healthSlider: {fileID: 530063821}
 --- !u!114 &858785704893000846
 MonoBehaviour:
   m_ObjectHideFlags: 0
